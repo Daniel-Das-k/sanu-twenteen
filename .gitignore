@@ -1,0 +1,38 @@
+# macOS metadata
+.DS_Store
+**/.DS_Store
+
+# Original/source photographs. The optimized files used by the site live in site/assets.
+photos/
+
+# Internal notes that are not part of the published birthday site
+changes.md
+research/
+
+# Local asset-generation tooling
+site/tools/
+
+# Superseded or currently unused site media
+site/assets/cafe-call.jpg
+site/assets/cafe-red.jpg
+site/assets/cafe-us.jpg
+site/assets/car-mirror.mp4
+site/assets/college-event.jpg
+site/assets/halwa-laugh.jpg
+site/assets/halwa-smile.jpg
+site/assets/hm-mirror.jpg
+site/assets/lunch-smile.jpg
+site/assets/spider-day-mirror-2.jpg
+site/assets/spidey.glb
+site/assets/spidey3d.js
+site/assets/thaanya-booth.jpg
+site/assets/thaanya-collage-clean.jpg
+site/assets/thaanya-mirror.jpg
+site/assets/thaanya-restaurant-talk.jpg
+site/assets/vendor/
+site/assets/wishes-family-01-poster.jpg
+site/assets/wishes-family-01.mp4
+site/assets/wishes-family-02-poster.jpg
+site/assets/wishes-family-02.mp4
+site/assets/wishes-family-03-poster.jpg
+site/assets/wishes-family-03.mp4
