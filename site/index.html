@@ -1211,8 +1211,8 @@ footer{display:none}
       <div class="hhf-video rv">
         <p class="hhf-video-label">their birthday wish for you</p>
         <div class="hhf-video-stage">
-          <video id="hhf-birthday-video" controls playsinline preload="metadata" poster="assets/helping-hands-birthday-wish-poster.jpg" aria-label="Birthday wish from children in Varanasi">
-            <source src="assets/helping-hands-birthday-wish.mp4" type="video/mp4">
+          <video id="hhf-birthday-video" controls playsinline preload="auto" poster="assets/helping-hands-birthday-wish-poster.jpg" aria-label="Birthday wish from children in Varanasi">
+            <source src="assets/foundation-stream.mp4" type="video/mp4">
           </video>
         </div>
       </div>
@@ -1321,7 +1321,7 @@ footer{display:none}
   </button>
   <button id="mini-song-toggle" type="button" aria-label="Pause HER">Ⅱ</button>
 </div>
-<audio id="song" src="assets/HER.mp3" preload="metadata"></audio>
+<audio id="song" src="assets/HER.mp3" preload="auto"></audio>
 <canvas id="confetti"></canvas>
 
 <script>
@@ -1443,7 +1443,7 @@ That’s all I wanted to tell you.`}
       title: "A few words from your close ones.",
       byline: "just for you, on your birthday.",
       caption: "",
-      src: "assets/wishes-family-film-final.mp4",
+      src: "assets/wishes-stream.mp4",
       poster: "assets/wishes-family-film-rounded.jpg",
       captions: "",
       orientation: "portrait"
@@ -1888,6 +1888,7 @@ const songMute = $('#song-mute');
 const songRepeat = $('#song-repeat');
 const songLyricsScroll = $('#song-lyrics-scroll');
 let songStarted = false;
+let songResumeTime = null;
 let activeLyric = -1;
 
 song.volume = Number(songVolume.value);
@@ -1900,6 +1901,7 @@ const lyricBlocks = CONFIG.songLyrics.map((item, index) => {
   block.dataset.start = item.start;
   block.setAttribute('aria-label', `Play lyrics section ${index + 1}`);
   block.addEventListener('click', () => {
+    songResumeTime = null;
     song.currentTime = item.start;
     updateLyrics(true);
     setSongPlaying(true);
@@ -1959,6 +1961,13 @@ function setSongPlaying(shouldPlay){
     return;
   }
   songStarted = true;
+  if (songResumeTime !== null) {
+    song.currentTime = songResumeTime;
+    songResumeTime = null;
+  }
+  document.querySelectorAll('#wish-reel video, #hhf-birthday-video').forEach(video => {
+    if (!video.paused) video.pause();
+  });
   syncSongUI();
   song.play().then(() => {
     syncSongUI();
@@ -1999,6 +2008,7 @@ songVolume.addEventListener('input', () => {
 });
 
 songProgress.addEventListener('input', () => {
+  songResumeTime = null;
   song.currentTime = Number(songProgress.value);
   paintRange(songProgress, song.currentTime);
   updateLyrics(true);
@@ -2161,6 +2171,7 @@ if (journey.hasDirectRoute) {
   function takeAudioFocus(video){
     allWishVideos().forEach(other => { if (other !== video) other.pause(); });
     if (!song.paused) {
+      songResumeTime = song.currentTime;
       resumeSongAfterWish = true;
       song.pause();
       syncSongUI();
@@ -2188,7 +2199,7 @@ if (journey.hasDirectRoute) {
       video.src = item.src;
       video.controls = true;
       video.playsInline = true;
-      video.preload = 'metadata';
+      video.preload = 'auto';
       video.setAttribute('aria-label', `${item.title} — ${item.byline}`);
       if (item.poster) video.poster = item.poster;
       if (item.captions) {
