@@ -546,17 +546,13 @@ video{width:100%;display:block;border-radius:5px}
 }
 .hhf-video{width:100%;margin:2.7rem auto 0}
 .hhf-video-label{font-family:var(--hand);font-size:1.15rem;color:var(--ink-soft);margin-bottom:.75rem;text-align:center}
-.hhf-video-placeholder{
-  width:100%;aspect-ratio:16/9;min-height:0;display:grid;place-items:center;padding:2rem;text-align:center;
-  background:#28201f;border:1px solid #4e403d;color:#f8ece5
+.hhf-video-stage{
+  width:min(100%,560px);margin:0 auto;padding:.55rem;background:rgba(255,250,246,.68);
+  border:1px solid rgba(212,174,155,.72);box-shadow:0 18px 45px rgba(91,60,48,.14)
 }
-.hhf-video-placeholder div{max-width:310px}
-.hhf-video-placeholder .play-mark{
-  width:48px;height:48px;margin:0 auto .9rem;border:1px solid rgba(255,255,255,.55);
-  border-radius:50%;display:grid;place-items:center;padding-left:3px
+.hhf-video-stage video{
+  display:block;width:100%;aspect-ratio:478/850;object-fit:contain;background:#171313
 }
-.hhf-video-placeholder strong{display:block;font-family:var(--hand);font-size:1.15rem;font-weight:400}
-.hhf-video-placeholder span{display:block;margin-top:.45rem;font-family:var(--ui);font-size:.7rem;line-height:1.55;color:#c9b9b1}
 .hhf-section{margin-top:2.7rem}
 .hhf-work{margin-top:1rem;border-top:1px solid #dfcec1}
 .hhf-work-row{display:grid;grid-template-columns:2.3rem minmax(0,1fr);gap:.8rem;padding:1.05rem 0;border-bottom:1px solid #dfcec1}
@@ -579,7 +575,7 @@ video{width:100%;display:block;border-radius:5px}
   .hhf-gallery-grid{grid-template-columns:1fr}
   .hhf-gallery-main{min-height:230px}
   .hhf-gallery-side{grid-template-columns:1fr 1fr;grid-template-rows:150px;min-height:0}
-  .hhf-video-placeholder{min-height:220px}
+  .hhf-video-stage{padding:.35rem}
 }
 
 /* ————————————————— HER · dedicated music chapter ————————————————— */
@@ -1161,12 +1157,10 @@ footer{display:none}
 
       <div class="hhf-video rv">
         <p class="hhf-video-label">their birthday wish for you</p>
-        <div class="hhf-video-placeholder" role="img" aria-label="Reserved space for the Helping Hands Foundation birthday video">
-          <div>
-            <span class="play-mark" aria-hidden="true">▶</span>
-            <strong>the Varanasi video goes here</strong>
-            <span>this space is ready for the final video file</span>
-          </div>
+        <div class="hhf-video-stage">
+          <video id="hhf-birthday-video" controls playsinline preload="metadata" poster="assets/helping-hands-birthday-wish-poster.jpg" aria-label="Birthday wish from children in Varanasi">
+            <source src="assets/helping-hands-birthday-wish.mp4" type="video/mp4">
+          </video>
         </div>
       </div>
 
@@ -2089,17 +2083,31 @@ if (journey.hasDirectRoute) enterStoryFromRoute();
 /* Birthday wishes: complete players when files are configured, calm placeholders until then. */
 (() => {
   const reel = $('#wish-reel');
+  const foundationVideo = $('#hhf-birthday-video');
   let resumeSongAfterWish = false;
+
+  function allWishVideos(){
+    return [...reel.querySelectorAll('video'), ...(foundationVideo ? [foundationVideo] : [])];
+  }
 
   function handBackToSong(){
     queueMicrotask(() => {
-      const anotherWishIsPlaying = [...reel.querySelectorAll('video')]
+      const anotherWishIsPlaying = allWishVideos()
         .some(video => !video.paused && !video.ended);
       if (!anotherWishIsPlaying && resumeSongAfterWish) {
         resumeSongAfterWish = false;
         setSongPlaying(true);
       }
     });
+  }
+
+  function takeAudioFocus(video){
+    allWishVideos().forEach(other => { if (other !== video) other.pause(); });
+    if (!song.paused) {
+      resumeSongAfterWish = true;
+      song.pause();
+      syncSongUI();
+    }
   }
 
   CONFIG.wishVideos.forEach((item, index) => {
@@ -2135,14 +2143,7 @@ if (journey.hasDirectRoute) enterStoryFromRoute();
         track.default = true;
         video.appendChild(track);
       }
-      video.addEventListener('play', () => {
-        reel.querySelectorAll('video').forEach(other => { if (other !== video) other.pause(); });
-        if (!song.paused) {
-          resumeSongAfterWish = true;
-          song.pause();
-          syncSongUI();
-        }
-      });
+      video.addEventListener('play', () => takeAudioFocus(video));
       video.addEventListener('pause', handBackToSong);
       video.addEventListener('ended', handBackToSong);
       video.addEventListener('error', () => {
@@ -2159,6 +2160,12 @@ if (journey.hasDirectRoute) enterStoryFromRoute();
     card.append(heading, screen, caption);
     reel.appendChild(card);
   });
+
+  if (foundationVideo) {
+    foundationVideo.addEventListener('play', () => takeAudioFocus(foundationVideo));
+    foundationVideo.addEventListener('pause', handBackToSong);
+    foundationVideo.addEventListener('ended', handBackToSong);
+  }
 
   function makePlaceholder(index, status){
     const empty = document.createElement('div');
