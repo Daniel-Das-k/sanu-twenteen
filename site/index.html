@@ -415,6 +415,7 @@ section.ch.active{
 .polaroid img{width:100%;display:block;border-radius:2px;aspect-ratio:3/3.6;object-fit:cover}
 .polaroid p{font-family:var(--hand);text-align:center;font-size:.95rem;margin-top:.6rem;color:var(--ink-soft)}
 .polaroid.moved-video video{aspect-ratio:3/3.6;object-fit:cover}
+.polaroid.no-caption{padding-bottom:.6rem}
 .polaroid.wide{grid-column:span 2}
 .polaroid.wide img{aspect-ratio:16/10}
 .story-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem}
@@ -1105,12 +1106,12 @@ footer{display:none}
     <div class="pile">
       <div class="polaroid portrait rv" style="--r:1.2deg"><img src="assets/our-first-photo.jpg" alt="The first photo Sanya and Danny took together" loading="lazy"><p>the first photo we took together.</p></div>
       <div class="polaroid us-feature rv" style="--r:-1deg"><img src="assets/us-hm-main.jpg" alt="Sanya and Danny taking a mirror selfie at H&M"><p>us.</p></div>
-      <div class="polaroid wide rv" style="--r:.8deg"><img src="assets/us-img4997.jpg" alt="Sanya and Danny taking a selfie outdoors"></div>
-      <div class="polaroid rv" style="--r:-1.4deg"><img src="assets/mcd-mirror.jpg" alt="Mirror photo of Sanya and Danny"></div>
-      <div class="polaroid moved-video rv" style="--r:1.3deg"><video src="assets/cafe-video.mp4" autoplay muted loop playsinline aria-label="Sanya at the café"></video><p>evidence of us just… being us.</p></div>
-      <div class="polaroid wide rv" style="--r:-1.1deg"><img src="assets/us-img4902.jpg" alt="Sanya and Danny together in class" loading="lazy"></div>
-      <div class="polaroid portrait rv" style="--r:1.8deg"><img src="assets/us-closeup.jpg" alt="Close-up selfie of Sanya and Danny" loading="lazy"></div>
-      <div class="polaroid wide rv" style="--r:-1.3deg"><img src="assets/us-blue.jpg" alt="Sanya and Danny smiling together" loading="lazy"></div>
+      <div class="polaroid wide no-caption rv" style="--r:.8deg"><img src="assets/us-img4997.jpg" alt="Sanya and Danny taking a selfie outdoors"></div>
+      <div class="polaroid no-caption rv" style="--r:-1.4deg"><img src="assets/mcd-mirror.jpg" alt="Mirror photo of Sanya and Danny"></div>
+      <div class="polaroid moved-video no-caption rv" style="--r:1.3deg"><video src="assets/cafe-video.mp4" autoplay muted loop playsinline aria-label="Sanya at the café"></video></div>
+      <div class="polaroid wide no-caption rv" style="--r:-1.1deg"><img src="assets/us-img4902.jpg" alt="Sanya and Danny together in class" loading="lazy"></div>
+      <div class="polaroid portrait no-caption rv" style="--r:1.8deg"><img src="assets/us-closeup.jpg" alt="Close-up selfie of Sanya and Danny" loading="lazy"></div>
+      <div class="polaroid wide no-caption rv" style="--r:-1.3deg"><img src="assets/us-blue.jpg" alt="Sanya and Danny smiling together" loading="lazy"></div>
     </div>
   </section>
 
@@ -1139,9 +1140,9 @@ footer{display:none}
 
     <div class="hhf-layout">
       <div class="hhf-birthday rv">
-        <h3>what we did for your birthday</h3>
-        <p>Through the foundation’s birthday programme, we helped arrange food, cake and a small celebration for children supported by them. In return, they recorded a birthday wish just for you.</p>
-        <p class="hhf-personal">I wanted your day to leave one more warm little memory somewhere else too.</p>
+        <h3>a small birthday gesture</h3>
+        <p>For your birthday, food, cake and a small celebration were arranged for children supported by the foundation. In return, they recorded this birthday wish for you.</p>
+        <p class="hhf-personal">just a small way for your day to bring a little happiness somewhere else too.</p>
       </div>
 
       <figure class="hhf-gallery rv">
