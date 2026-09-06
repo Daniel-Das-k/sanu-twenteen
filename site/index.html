@@ -507,8 +507,8 @@ video{width:100%;display:block;border-radius:5px}
 .wish-heading{padding:.75rem .35rem 1rem}
 .wish-heading h3{font-family:var(--serif);font-size:clamp(1.3rem,4.5vw,1.7rem);font-weight:520;line-height:1.25}
 .wish-heading p{margin-top:.25rem;font-family:var(--hand);font-size:.96rem;color:var(--rose)}
-.wish-screen{position:relative;aspect-ratio:16/9;background:#28201f;border:1px solid #4e403d;overflow:hidden}
-.wish-screen video{width:100%;height:100%;object-fit:contain;background:#171313;border-radius:0}
+.wish-screen{position:relative;aspect-ratio:16/9;background:#28201f;border:1px solid #4e403d;overflow:hidden;border-radius:16px}
+.wish-screen video{width:100%;height:100%;object-fit:contain;background:#171313;border-radius:16px}
 .wish-empty{
   position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:.65rem;padding:1.5rem;text-align:center;color:#f8ece5;
@@ -898,7 +898,7 @@ footer{display:none}
     <figcaption>this cutiee, before everything ✦</figcaption>
   </figure>
   <h1>for <b>sanuuu</b>,</h1>
-  <p>some things I wanted to tell you, properly.</p>
+  <p>a little birthday gift for you — hope it makes you smile. 🤍</p>
   <button id="seal-btn" aria-label="Open the letter"><span>S</span></button>
   <div class="hint">tap the seal</div>
 </div>
@@ -1047,7 +1047,7 @@ footer{display:none}
   <!-- Thaanya · sister archive -->
   <section class="ch" id="ch-thaanya">
     <div class="eyebrow rv">sister archive</div>
-    <h2 class="rv">God-tier moments with <em>Thaanya.</em></h2>
+    <h2 class="rv">Moments with <em>Thaanya.</em></h2>
     <p class="note rv">a few moments from a bond that has grown through every version of life —</p>
     <div class="sister-show rv" id="thaanya-show">
       <div class="sister-stage" tabindex="0" aria-label="Thaanya photo slideshow"></div>
@@ -1102,7 +1102,7 @@ footer{display:none}
       <div class="polaroid wide rv" style="--r:-1.2deg"><img src="assets/rooftop.jpg" alt="Film-style rooftop photos of Sanya"><p class="heart-caption" aria-label="love">❤️</p></div>
           <div class="polaroid rv" style="--r:1.8deg"><img src="assets/sanya-saree-sunlight.jpg" alt="Sanya wearing a white and green saree outdoors"><p>longest day i had w u.</p></div>
           <div class="polaroid rv" style="--r:-1.6deg"><img src="assets/mcd-window.jpg" alt="Sanya at the McDonald's window seat"><p>cutes 🥰</p></div>
-          <div class="polaroid portrait rv" style="--r:2.1deg"><img src="assets/her-bw-portrait.jpg" alt="Black-and-white portrait of Sanya" loading="lazy"><p>the black-and-white phase had a point.</p></div>
+          <div class="polaroid portrait rv" style="--r:2.1deg"><img src="assets/her-bw-portrait.jpg" alt="Black-and-white portrait of Sanya" loading="lazy"><p>preetyyyy preetyy❤️.</p></div>
     </div>
     <div class="her-filter-collage rv" role="group" aria-label="A playful collage of Sanya using camera filters">
       <figure class="her-collage-card her-collage-heart"><img src="assets/her-filter-hearts.jpg" alt="Sanya making a heart with her hands, surrounded by heart effects" loading="lazy"></figure>
@@ -1442,9 +1442,9 @@ That’s all I wanted to tell you.`}
     {
       title: "A few words from your close ones.",
       byline: "just for you, on your birthday.",
-      caption: "Press play.",
-      src: "assets/wishes-family-film-v1.mp4",
-      poster: "assets/wishes-family-film-v1-poster.jpg",
+      caption: "",
+      src: "assets/wishes-family-film-clean.mp4",
+      poster: "assets/wishes-family-film-clean.jpg",
       captions: "",
       orientation: "portrait"
     }
@@ -1455,7 +1455,7 @@ That’s all I wanted to tell you.`}
     stops: [
       {id:"ch0",      route:"origin",      cta:"a few moments when you were smol"},
       {id:"ch1",      route:"childhood",   cta:"the words you put into the world"},
-      {id:"ch-publications",route:"publications",cta:"god-tier sister moments"},
+      {id:"ch-publications",route:"publications",cta:"god-tier moments"},
       {id:"ch-thaanya",route:"thaanya",    cta:"now the menace era"},
       {id:"ch2",      route:"her",         cta:"next: spider-man dayyy"},
       {id:"ch3",      route:"august-3",    cta:"more of us"},
@@ -1949,7 +1949,7 @@ function syncSongUI(){
   miniSongToggle.textContent = playing ? 'Ⅱ' : '▶';
   miniSongToggle.style.paddingLeft = playing ? '0' : '2px';
   miniSongToggle.setAttribute('aria-label', playing ? 'Pause HER' : 'Play HER');
-  if (songStarted) miniPlayer.classList.add('show');
+  miniPlayer.classList.toggle('show', opened);
 }
 
 function setSongPlaying(shouldPlay){
@@ -2038,6 +2038,7 @@ function startTypewriter(){
 function enterStoryFromRoute(){
   opened = true;
   $('#landing').classList.add('gone');
+  syncSongUI();
   startTypewriter();
 }
 document.addEventListener('storyroute', e => {
@@ -2052,7 +2053,10 @@ document.addEventListener('storyroute', e => {
     enterStoryFromRoute();
   }
 });
-if (journey.hasDirectRoute) enterStoryFromRoute();
+if (journey.hasDirectRoute) {
+  enterStoryFromRoute();
+  setSongPlaying(true);
+}
 
 /* The Mystical Moon: a compact three-page reader with buttons, keys, and swipe. */
 (() => {
@@ -2332,14 +2336,7 @@ $$('.rv').forEach(el => io.observe(el));
   const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
   async function ensureVisible(word, token){
-    const box = word.getBoundingClientRect();
-    if (box.bottom <= innerHeight - 120) return true;
-    pen.classList.remove('active');
-    word.scrollIntoView({behavior:'smooth', block:'center'});
-    await wait(380);
-    if (!writing || token !== writeToken) return false;
-    pen.classList.add('active');
-    return true;
+    return writing && token === writeToken;
   }
 
   function finishWriting(){
