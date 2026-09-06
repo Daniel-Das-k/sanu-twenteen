@@ -1608,6 +1608,13 @@ const journey = (() => {
 
   function activate(i, routeMode = 'push'){
     if (i < 0 || i >= stops.length) return;
+    // Load this chapter and the next before their lazy images enter the viewport.
+    [stops[i], stops[i + 1]].filter(Boolean).forEach(stop => {
+      document.getElementById(stop.id).querySelectorAll('img').forEach(img => {
+        img.loading = 'eager';
+        img.decoding = 'async';
+      });
+    });
     songOpen = false;
     document.body.classList.toggle('letter-route', stops[i].route === 'letter');
     document.body.classList.remove('song-route');
@@ -1618,7 +1625,7 @@ const journey = (() => {
       if (index === i) {
         section.scrollTop = 0;
         section.querySelectorAll('.rv:not(.in)').forEach((item, order) =>
-          setTimeout(() => item.classList.add('in'), reduced ? 0 : 80 + order * 70));
+          setTimeout(() => item.classList.add('in'), reduced ? 0 : Math.min(80 + order * 35, 180)));
       }
     });
     cur = i;
