@@ -462,11 +462,12 @@ video{width:100%;display:block;border-radius:5px}
 .wish-card:nth-child(2){--tape-turn:2deg}
 .wish-card.wish-portrait{width:100%;justify-self:center}
 .wish-card.wish-portrait .wish-screen{aspect-ratio:9/16}
-.wish-heading{padding:.75rem .35rem 1rem}
-.wish-heading h3{font-family:var(--serif);font-size:clamp(1.3rem,4.5vw,1.7rem);font-weight:520;line-height:1.25}
-.wish-heading p{margin-top:.25rem;font-family:var(--hand);font-size:.96rem;color:var(--rose)}
 .wish-screen{position:relative;aspect-ratio:16/9;background:#28201f;border:1px solid #4e403d;overflow:hidden}
-.wish-screen video{width:100%;height:100%;object-fit:contain;background:#171313;border-radius:0}
+.wish-screen::before{
+  content:'';position:absolute;inset:-24px;background-image:var(--wish-poster);background-size:cover;
+  background-position:center;filter:blur(22px);opacity:.42;transform:scale(1.08)
+}
+.wish-screen video{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;background:rgba(23,19,19,.28);border-radius:0}
 .wish-empty{
   position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:.65rem;padding:1.5rem;text-align:center;color:#f8ece5;
@@ -480,7 +481,6 @@ video{width:100%;display:block;border-radius:5px}
 }
 .wish-empty strong{font-family:var(--hand);font-size:1.02rem;font-weight:400}
 .wish-empty span{font-family:var(--ui);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:#c9b9b1}
-.wish-caption{padding:.9rem .35rem .3rem;font-family:var(--hand);font-size:.98rem;line-height:1.65;color:var(--ink-soft)}
 .wish-note{
   margin-top:2.3rem;padding-left:1rem;border-left:2px solid var(--rose);
   font-family:var(--hand);font-size:1rem;line-height:1.7;color:var(--ink);
@@ -490,25 +490,18 @@ video{width:100%;display:block;border-radius:5px}
   #ch-wishes .wish-intro{max-width:760px}
   #ch-wishes .wish-reel{margin-top:2rem}
   .wish-card.wish-portrait{
-    display:grid;grid-template-columns:minmax(220px,.8fr) minmax(0,1.5fr);
-    grid-template-rows:1fr 1fr;column-gap:clamp(24px,4vw,64px);
-    padding:clamp(20px,3vw,40px);align-items:start;
+    display:block;max-width:1120px;padding:clamp(12px,1.5vw,20px);
   }
-  .wish-portrait .wish-heading{grid-column:1;grid-row:1;align-self:end;padding:0 0 1rem}
-  .wish-portrait .wish-heading h3{font-size:clamp(2rem,3.2vw,3rem);line-height:1.12}
-  .wish-portrait .wish-heading p{margin-top:1rem;font-size:1.15rem}
-  .wish-portrait .wish-caption{grid-column:1;grid-row:2;padding:0;font-size:1.1rem;max-width:32ch}
   .wish-card.wish-portrait .wish-screen{
-    grid-column:2;grid-row:1 / 3;aspect-ratio:auto;width:100%;
-    height:78vh;height:78svh;max-height:1000px;background:#fdf3ec;border-color:#ead8c9;
+    aspect-ratio:16/9;width:100%;height:auto;max-height:none;background:#302726;border-color:#ead8c9;
   }
-  .wish-portrait .wish-screen video{background:#fdf3ec}
+  .wish-portrait .wish-screen video{background:rgba(38,29,28,.18)}
 }
 @media (max-width:520px){
   .wish-reel{gap:2.2rem}
   .wish-card{padding:.55rem}
-  .wish-heading{padding:.8rem .25rem}
-  .wish-caption{padding:.8rem .25rem .35rem}
+  .wish-screen::before{display:none}
+  .wish-screen video{background:#171313}
 }
 
 /* ————————————————— helping hands · birthday kindness ————————————————— */
@@ -1390,12 +1383,9 @@ That’s all I wanted to tell you.`}
   /* Birthday wishes — the edited family film. */
   wishVideos: [
     {
-      title: "They had to be part of this.",
-      byline: "Thaanya and your cousins have something to say.",
-      caption: "You’ve shared so many little moments with them. Here’s one more to keep. Press play.",
+      title: "Birthday wishes from Thaanya and your cousins",
       src: "assets/wishes-family-film-v1.mp4",
       poster: "assets/wishes-family-film-v1-poster.jpg",
-      captions: "",
       orientation: "portrait"
     }
   ],
@@ -1432,7 +1422,7 @@ That’s all I wanted to tell you.`}
 
   letter: [
     {t:"salut", text:"Dear sanuuu,"},
-    {t:"p", text:"It’s your birthday, and I want to give you something more meaningful than just pretty words. I want to give you clarity about how I feel, why I chose you, and what you can expect from me."},
+    {t:"p", text:"It’s your birthday, and I want to give you something more meaningful than just pretty words. I want to tell you clearly and honestly what you mean to me, and why this matters so much to me."},
     {t:"p", text:"I chose you because of the person you are when nobody is asking you to be anything else. You think about me, notice the smallest things, and care about how I’m doing even when I don’t say much. I love the way you carry yourself and the way you are around me — the comfort, the silliness, the softness, and all those little expressions you probably don’t even realise you make. They’re genuinely so cute. I admire how thoughtfully you handle people and situations."},
     {t:"p", text:"I want my actions to always make you feel safe with me. You should never have to constantly question where you stand or wonder whether I’m suddenly going to leave. I chose you, and difficult days will not make me disappear.", note:"I choose you."},
     {t:"p", text:"I can’t promise we’ll never misunderstand each other or that everything will always be easy. But I can promise I won’t use silence to punish you or make you guess what I’m feeling. I’ll talk to you, listen properly, admit when I’m wrong and work through things with you."},
@@ -2104,16 +2094,9 @@ if (journey.hasDirectRoute) enterStoryFromRoute();
     card.className = 'wish-card rv';
     if (item.orientation === 'portrait') card.classList.add('wish-portrait');
 
-    const heading = document.createElement('div');
-    heading.className = 'wish-heading';
-    const title = document.createElement('h3');
-    title.textContent = item.title;
-    const byline = document.createElement('p');
-    byline.textContent = item.byline;
-    heading.append(title, byline);
-
     const screen = document.createElement('div');
     screen.className = 'wish-screen';
+    if (item.poster) screen.style.setProperty('--wish-poster', `url("${item.poster}")`);
 
     if (item.src) {
       const video = document.createElement('video');
@@ -2121,7 +2104,7 @@ if (journey.hasDirectRoute) enterStoryFromRoute();
       video.controls = true;
       video.playsInline = true;
       video.preload = 'metadata';
-      video.setAttribute('aria-label', `${item.title} — ${item.byline}`);
+      video.setAttribute('aria-label', item.title);
       if (item.poster) video.poster = item.poster;
       if (item.captions) {
         const track = document.createElement('track');
@@ -2150,10 +2133,7 @@ if (journey.hasDirectRoute) enterStoryFromRoute();
       screen.appendChild(makePlaceholder(index, 'video slot ready'));
     }
 
-    const caption = document.createElement('p');
-    caption.className = 'wish-caption';
-    caption.textContent = item.caption;
-    card.append(heading, screen, caption);
+    card.append(screen);
     reel.appendChild(card);
   });
 
