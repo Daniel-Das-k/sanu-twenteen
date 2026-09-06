@@ -535,12 +535,16 @@ video{width:100%;display:block;border-radius:5px}
 .hhf-birthday p{margin-top:.75rem;line-height:1.75;color:var(--ink)}
 .hhf-birthday .hhf-personal{font-family:var(--hand);font-size:1.08rem;color:var(--rose)}
 .hhf-gallery{max-width:1040px;margin:2rem auto 0}
-.hhf-gallery-grid{display:grid;grid-template-columns:1.45fr 1fr;gap:.7rem}
+.hhf-gallery-grid{
+  display:grid;grid-template-columns:1.45fr 1fr;gap:.7rem;aspect-ratio:2.3/1;overflow:hidden
+}
 .hhf-gallery-main,.hhf-gallery-side img{
   display:block;width:100%;height:100%;min-height:0;object-fit:cover;border:1px solid #ead8c9
 }
-.hhf-gallery-main{min-height:350px}
-.hhf-gallery-side{display:grid;grid-template-rows:1fr 1fr;gap:.7rem;min-height:350px}
+.hhf-gallery-main{min-width:0}
+.hhf-gallery-side{
+  display:grid;grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:.7rem;min-width:0;min-height:0;overflow:hidden
+}
 .hhf-gallery figcaption{
   margin-top:.7rem;text-align:center;font-family:var(--hand);font-size:.94rem;
   line-height:1.55;color:var(--ink-soft)
@@ -573,9 +577,9 @@ video{width:100%;display:block;border-radius:5px}
 @media (max-width:520px){
   .hhf-identity{grid-template-columns:76px minmax(0,1fr);gap:1rem;padding:1rem}
   .hhf-logo{width:76px}
-  .hhf-gallery-grid{grid-template-columns:1fr}
-  .hhf-gallery-main{min-height:230px}
-  .hhf-gallery-side{grid-template-columns:1fr 1fr;grid-template-rows:150px;min-height:0}
+  .hhf-gallery-grid{grid-template-columns:1fr;aspect-ratio:auto;overflow:visible}
+  .hhf-gallery-main{height:auto;aspect-ratio:4/3}
+  .hhf-gallery-side{grid-template-columns:1fr 1fr;grid-template-rows:150px;height:150px}
   .hhf-video-stage{padding:.35rem}
 }
 
@@ -1142,7 +1146,7 @@ footer{display:none}
       <div class="hhf-birthday rv">
         <h3>a small birthday gesture</h3>
         <p>For your birthday, food, cake and a small celebration were arranged for children supported by the foundation. In return, they recorded this birthday wish for you.</p>
-        <p class="hhf-personal">just a small way for your day to bring a little happiness somewhere else too.</p>
+        <p class="hhf-personal">about twenty-five children got to share a meal and a little piece of your birthday too. ♡</p>
       </div>
 
       <figure class="hhf-gallery rv">
