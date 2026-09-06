@@ -802,6 +802,9 @@ body.letter-route #rail{display:none}
 #letter .ink-word.in{opacity:1;clip-path:inset(0)}
 #letter .salut{font-family:var(--script);font-size:1.75rem;color:#7e352f}
 #letter .sign{font-family:var(--script);text-align:right;font-size:1.55rem;color:#7e352f}
+.signature-heart{display:inline-block;width:28px;height:24px;margin-left:.28rem;vertical-align:-.3em;overflow:visible}
+.signature-heart path{fill:none;stroke:#7e352f;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:80;stroke-dashoffset:80}
+.signature-heart.drawn path{stroke-dashoffset:0}
 .letter-read-hint{
   display:none;position:relative;z-index:2;width:max-content;margin:0 0 1.25rem auto;
   font-family:var(--hand);font-size:.78rem;color:#725d45;border-bottom:1px solid rgba(114,93,69,.38);
@@ -853,7 +856,7 @@ footer{display:none}
     <figcaption>this cutiee, before everything ✦</figcaption>
   </figure>
   <h1>for <b>sanuuu</b>,</h1>
-  <p>a letter I've been meaning to write since 2:40 AM, June 18.</p>
+  <p>some things I wanted to tell you, properly.</p>
   <button id="seal-btn" aria-label="Open the letter"><span>S</span></button>
   <div class="hint">tap the seal</div>
 </div>
@@ -2218,6 +2221,15 @@ $$('.rv').forEach(el => io.observe(el));
         p.appendChild(word);
         if (index !== words.length - 1) p.appendChild(document.createTextNode(' '));
       });
+      if (item.t === 'sign') {
+        const heart = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        heart.setAttribute('class', 'signature-heart');
+        heart.setAttribute('viewBox', '0 0 30 26');
+        heart.setAttribute('aria-label', 'heart');
+        heart.innerHTML = '<path d="M2 10C2 4 10 2 15 8C20 2 28 4 28 10C28 16 21 21 15 25C9 21 2 16 2 10Z"/>';
+        p.appendChild(document.createTextNode(' '));
+        p.appendChild(heart);
+      }
       if (item.note) {
         const n = document.createElement('span');
         n.className = 'margin-note'; n.textContent = item.note;
@@ -2275,10 +2287,51 @@ $$('.rv').forEach(el => io.observe(el));
     if (pen) pen.getAnimations().forEach(animation => animation.cancel());
     sheet.querySelectorAll('.ink-word').forEach(word => word.classList.add('in'));
     sheet.querySelectorAll('.margin-note').forEach(note => note.classList.add('in'));
+    sheet.querySelectorAll('.signature-heart').forEach(heart => heart.classList.add('drawn'));
     if (pen) pen.classList.add('done');
     readHint.classList.remove('visible');
     sheet.classList.remove('writing');
     writing = false;
+  }
+
+  async function drawSignatureHeart(token){
+    const heart = sheet.querySelector('.signature-heart');
+    const path = heart?.querySelector('path');
+    if (!heart || !path || !await ensureVisible(heart, token)) return;
+
+    const length = path.getTotalLength();
+    const sheetBox = sheet.getBoundingClientRect();
+    const heartBox = heart.getBoundingClientRect();
+    const pointAt = distance => {
+      const point = path.getPointAtLength(distance);
+      return {
+        x: heartBox.left - sheetBox.left + point.x * heartBox.width / 30,
+        y: heartBox.top - sheetBox.top + point.y * heartBox.height / 26
+      };
+    };
+    const start = pointAt(0);
+    pen.classList.remove('active');
+    pen.style.transform = penTransform(start);
+    await wait(70);
+    if (!writing || token !== writeToken) return;
+    pen.classList.add('active');
+
+    path.style.strokeDasharray = `${length}`;
+    path.style.strokeDashoffset = `${length}`;
+    const penFrames = Array.from({length:25}, (_, index) => ({
+      transform:penTransform(pointAt(length * index / 24))
+    }));
+    const penMove = pen.animate(penFrames, {duration:760,easing:'linear',fill:'forwards'});
+    const ink = path.animate(
+      [{strokeDashoffset:`${length}`},{strokeDashoffset:'0'}],
+      {duration:760,easing:'linear',fill:'forwards'}
+    );
+    try { await Promise.all([penMove.finished, ink.finished]); } catch { return; }
+    if (!writing || token !== writeToken) return;
+    heart.classList.add('drawn');
+    path.style.strokeDashoffset = '0';
+    pen.style.transform = penTransform(pointAt(length));
+    penMove.cancel(); ink.cancel();
   }
 
   function writeLetter(){
@@ -2341,6 +2394,7 @@ $$('.rv').forEach(el => io.observe(el));
         if (/[.!?…]$/.test(word.textContent)) await wait(firstParagraph ? 130 : Math.max(35, 75 * speed));
         else if (/[,;:]$/.test(word.textContent)) await wait(firstParagraph ? 65 : Math.max(18, 38 * speed));
       }
+      if (writing && token === writeToken) await drawSignatureHeart(token);
       if (writing && token === writeToken) finishWriting();
     })();
   }
